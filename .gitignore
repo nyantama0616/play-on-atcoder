@@ -1,2 +1,5 @@
 contests/*
 !contests/.keep
+
+secrets/*
+!secrets/.keep
