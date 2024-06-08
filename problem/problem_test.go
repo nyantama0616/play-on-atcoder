@@ -22,7 +22,7 @@ func TestNewProblem(t *testing.T) {
 			t.Errorf("err should be nil, but got %v", err)
 		}
 
-		problem.DeleteProblemDir()
+		problem.RemoveProblemDir()
 	})
 
 	t.Run("不正なproblemIdを渡すとエラーが返る", func(t *testing.T) {
@@ -47,7 +47,7 @@ func TestNewProblem(t *testing.T) {
 			t.Errorf("problem directory should be created")
 		}
 
-		problem.DeleteProblemDir()
+		problem.RemoveProblemDir()
 	})
 }
 
@@ -117,7 +117,7 @@ func TestCreateProblemDir(t *testing.T) {
 		}
 	})
 
-	problem.DeleteProblemDir()
+	problem.RemoveProblemDir()
 }
 
 func TestDeleteProblemDir(t *testing.T) {
@@ -127,7 +127,7 @@ func TestDeleteProblemDir(t *testing.T) {
 	t.Run("問題のディレクトリを削除できる", func(t *testing.T) {
 		problem.CreateProblemDir()
 
-		err := problem.DeleteProblemDir()
+		err := problem.RemoveProblemDir()
 		if err != nil {
 			t.Errorf("err should be nil, but got %v", err)
 		}
@@ -139,7 +139,7 @@ func TestDeleteProblemDir(t *testing.T) {
 		}
 	})
 
-	problem.DeleteProblemDir()
+	problem.RemoveProblemDir()
 }
 
 func TestValidateProblemId(t *testing.T) {

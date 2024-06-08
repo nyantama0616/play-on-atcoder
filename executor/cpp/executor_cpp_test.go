@@ -11,6 +11,8 @@ import (
 
 func TestCompile(t *testing.T) {
 	problem, _ := NewProblem("abc354_c")
+	defer problem.RemoveProblemDir()
+
 	executorCpp := NewExecutorCpp(
 		problem,
 		SourceCodePath{
@@ -38,6 +40,8 @@ func TestCompile(t *testing.T) {
 
 func TestExecute(t *testing.T) {
 	problem, _ := NewProblem("abc354_c")
+	defer problem.RemoveProblemDir()
+
 	executorCpp := NewExecutorCpp(
 		problem,
 		SourceCodePath{
@@ -45,6 +49,8 @@ func TestExecute(t *testing.T) {
 			IncludeDirPath: fmt.Sprintf("%s/executor/cpp/assets/include", setting.RootDir),
 		},
 	)
+
+	executorCpp.Compile()
 
 	inputFilePath := fmt.Sprintf("%s/executor/cpp/assets/input.txt", setting.RootDir)
 	outputFilePath := fmt.Sprintf("%s/executor/cpp/assets/output.txt", setting.RootDir)

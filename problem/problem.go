@@ -83,7 +83,7 @@ func (p *Problem) CreateProblemDir() error {
 	return nil
 }
 
-func (p *Problem) DeleteProblemDir() error {
+func (p *Problem) RemoveProblemDir() error {
 	err := os.RemoveAll(p.ProblemDirPath())
 	if err != nil {
 		return err

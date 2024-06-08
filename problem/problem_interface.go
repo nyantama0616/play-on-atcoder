@@ -9,4 +9,7 @@ type IProblem interface {
 
 	ProblemUrl() string
 	SubmissionUrl() string
+
+	CreateProblemDir() error
+	RemoveProblemDir() error
 }

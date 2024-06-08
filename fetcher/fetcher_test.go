@@ -10,7 +10,7 @@ func TestNewFetcher(t *testing.T) {
 	t.Run("正しいproblemを渡すとFetcherが生成される", func(t *testing.T) {
 		problemId := "abc100_a"
 		problem, _ := problem.NewProblem(problemId)
-		defer problem.DeleteProblemDir()
+		defer problem.RemoveProblemDir()
 
 		fetcher := NewFetcher(problem)
 
@@ -23,7 +23,7 @@ func TestNewFetcher(t *testing.T) {
 func TestFetchSamples(t *testing.T) {
 	problemId := "abc354_a"
 	problem, _ := problem.NewProblem(problemId)
-	defer problem.DeleteProblemDir()
+	defer problem.RemoveProblemDir()
 
 	fetcher := NewFetcher(problem)
 
