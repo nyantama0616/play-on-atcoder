@@ -10,8 +10,8 @@ import (
 )
 
 func TestCompile(t *testing.T) {
-	problem, _ := NewProblem("abc354_c")
-	defer problem.RemoveProblemDir()
+	problem, _ := NewProblem("abc354_a")
+	// defer problem.RemoveProblemDir()
 
 	executorCpp := NewExecutorCpp(
 		problem,
@@ -68,7 +68,8 @@ func TestExecute(t *testing.T) {
 
 	t.Run("出力結果が正しい", func(t *testing.T) {
 		output, _ := os.ReadFile(outputFilePath)
-		expectedOutput := "Hello, panda!\n"
+		fmt.Println(string(output))
+		expectedOutput := "6\n"
 
 		if string(output) != expectedOutput {
 			t.Errorf("Execute() failed: output is not same as expected")
