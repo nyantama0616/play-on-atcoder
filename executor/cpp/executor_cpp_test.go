@@ -9,9 +9,9 @@ import (
 	"github.com/nyantama0616/play-on-atcoder/setting"
 )
 
-func TestCompile(t *testing.T) {
+func TestArrange(t *testing.T) {
 	problem, _ := NewProblem("abc354_a")
-	// defer problem.RemoveProblemDir()
+	defer problem.RemoveProblemDir()
 
 	executorCpp := NewExecutorCpp(
 		problem,
@@ -21,15 +21,19 @@ func TestCompile(t *testing.T) {
 		},
 	)
 
-	err := executorCpp.Compile()
+	err := executorCpp.Arrange()
 	if err != nil {
-		t.Errorf("Compile() failed: %v", err)
+		t.Errorf("Arrange() failed: %v", err)
 	}
 
 	t.Run("dest.cppがdest_expected.cppと等しい", func(t *testing.T) {
+		arrangedFile, _ := executorCpp.ArrangedFile()
+		defer arrangedFile.Close()
+
+		destCppPath := arrangedFile.Name()
 		destCppExpectedPath := fmt.Sprintf("%s/executor/cpp/assets/dest_expected.cpp", setting.RootDir)
 		//２つのファイルを比較
-		destCpp, _ := os.ReadFile(executorCpp.destCppPath)
+		destCpp, _ := os.ReadFile(destCppPath)
 		destCppExpected, _ := os.ReadFile(destCppExpectedPath)
 
 		if string(destCpp) != string(destCppExpected) {

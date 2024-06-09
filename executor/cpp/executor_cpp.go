@@ -41,9 +41,9 @@ func NewExecutorCpp(problem problem.IProblem, sourceCodePath SourceCodePath) *Ex
 }
 
 func (e *ExecutorCpp) Compile() error {
-	err := e.arrange()
+	err := e.Arrange()
 	if err != nil {
-		return fmt.Errorf("failed to arrange: %v", err)
+		return fmt.Errorf("failed to Arrange: %v", err)
 	}
 
 	cmd := exec.Command("g++-14", "-std=gnu++20", "-Wall", "-Wextra", "-O2", "-DONLINE_JUDGE", "-I", e.sourceCodePath.IncludeDirPath, "-o", e.outputDirPath+"/dest", e.destCppPath)
@@ -70,7 +70,7 @@ func (e *ExecutorCpp) Execute(reader io.Reader, writer io.Writer, errorWriter io
 	return nil
 }
 
-func (e *ExecutorCpp) arrange() error {
+func (e *ExecutorCpp) Arrange() error {
 	sourceCode, err := os.ReadFile(e.sourceCodePath.MainPath) // ファイル全体を読み込む
 	if err != nil {
 		return fmt.Errorf("failed to read source code: %v", err)
@@ -104,4 +104,8 @@ func (e *ExecutorCpp) arrange() error {
 	}
 
 	return nil
+}
+
+func (e *ExecutorCpp) ArrangedFile() (*os.File, error) {
+	return os.Open(e.destCppPath)
 }
