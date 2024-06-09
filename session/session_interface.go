@@ -1,7 +1,7 @@
 package session
 
 type ISession interface {
-	Login(string, string) error
+	Login() error
 	Logout() error
 	IsLoggedIn() bool
 	SessionId() string

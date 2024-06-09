@@ -3,3 +3,5 @@ contests/*
 
 secrets/*
 !secrets/.keep
+
+.env

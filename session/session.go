@@ -28,7 +28,44 @@ func NewSession() *Session {
 	}
 }
 
-func (s *Session) Login(username, password string) error {
+func (s *Session) Login() error {
+	username := ""
+	password := ""
+	return s.login(username, password)
+}
+
+// TODO: ちゃんと実装する, session_idを削除しただけではログアウトにならない
+func (s *Session) Logout() error {
+	// ファイルを削除
+	err := os.Remove(s.sessionIdPath)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Session) IsLoggedIn() bool {
+	return s.SessionId() != ""
+}
+
+func (s *Session) SessionId() string {
+	file, err := os.Open(s.sessionIdPath)
+	if err != nil {
+		return ""
+	}
+	defer file.Close()
+
+	buf := make([]byte, 1024)
+	n, err := file.Read(buf)
+	if err != nil {
+		return ""
+	}
+
+	return string(buf[:n])
+}
+
+func (s *Session) login(username, password string) error {
 	url := "https://atcoder.jp/login"
 
 	success := false
@@ -70,37 +107,6 @@ func (s *Session) Login(username, password string) error {
 	}
 
 	return err
-}
-
-// TODO: ちゃんと実装する, session_idを削除しただけではログアウトにならない
-func (s *Session) Logout() error {
-	// ファイルを削除
-	err := os.Remove(s.sessionIdPath)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (s *Session) IsLoggedIn() bool {
-	return s.SessionId() != ""
-}
-
-func (s *Session) SessionId() string {
-	file, err := os.Open(s.sessionIdPath)
-	if err != nil {
-		return ""
-	}
-	defer file.Close()
-
-	buf := make([]byte, 1024)
-	n, err := file.Read(buf)
-	if err != nil {
-		return ""
-	}
-
-	return string(buf[:n])
 }
 
 // TODO: session_idのみ保存しているが、cookieを全部保存するようにするかもしれない

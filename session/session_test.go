@@ -1,17 +1,26 @@
 package session
 
 import (
+	"fmt"
+	"os"
 	"testing"
+
+	"github.com/joho/godotenv"
+	"github.com/nyantama0616/play-on-atcoder/setting"
 )
 
 func TestLogin(t *testing.T) {
+	envFilePath := fmt.Sprintf("%s/.env", setting.RootDir)
+	if err := godotenv.Load(envFilePath); err != nil {
+		panic("No .env file found")
+	}
+
 	s := NewSession()
-	defer s.Logout()
 
-	username := "test16test"
-	password := "kj9JwNnq003KgqJ"
+	username := os.Getenv("ATCODER_USERNAME")
+	password := os.Getenv("ATCODER_PASSWORD")
 
-	err := s.Login(username, password)
+	err := s.login(username, password)
 
 	t.Run("ログインが成功する", func(t *testing.T) {
 		if err != nil {
