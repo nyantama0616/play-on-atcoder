@@ -12,27 +12,37 @@ import (
 )
 
 type Fetcher struct {
-	problem   problem.IProblem
-	sampleNum int
+	problem             problem.IProblem
+	sampleNum           int
+	sampleContainerPath string
 }
 
 // FetcherがIFetcherを実装していることを確認
 var _ IFetcher = (*Fetcher)(nil)
 
 func NewFetcher(problem problem.IProblem) *Fetcher {
-	return &Fetcher{
-		problem:   problem,
-		sampleNum: 0,
+	sampleContainerPath := fmt.Sprintf("%s/fetcher/samples", problem.ProblemDirPath())
+	if err := os.MkdirAll(sampleContainerPath, 0755); err != nil {
+		panic(err)
 	}
+
+	return &Fetcher{
+		problem:             problem,
+		sampleNum:           0,
+		sampleContainerPath: sampleContainerPath,
+	}
+}
+
+func (f *Fetcher) Problem() problem.IProblem {
+	return f.problem
 }
 
 // 問題ページからサンプルケースを取得する
 func (f *Fetcher) FetchSamples() error {
 	// 既にサンプルケースを取得している場合は何もしない
 	if f.hasAlreadyFetched() {
-		// 末尾の改行を削除
 		count := 0
-		filepath.Walk(f.problem.ProblemDirPath(), func(path string, info os.FileInfo, err error) error {
+		filepath.Walk(f.sampleContainerPath, func(path string, info os.FileInfo, err error) error {
 			if info.IsDir() {
 				count++
 			}
@@ -123,7 +133,7 @@ func (f *Fetcher) SampleOutputFile(i int) (*os.File, error) {
 }
 
 func (f *Fetcher) sampleDirPath(i int) string {
-	return fmt.Sprintf("%s/case%d", f.problem.ProblemDirPath(), i)
+	return fmt.Sprintf("%s/case%d", f.sampleContainerPath, i)
 }
 
 func (f *Fetcher) sampleInputFilePath(i int) string {

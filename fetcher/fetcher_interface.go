@@ -1,8 +1,13 @@
 package fetcher
 
-import "os"
+import (
+	"os"
+
+	"github.com/nyantama0616/play-on-atcoder/problem"
+)
 
 type IFetcher interface {
+	Problem() problem.IProblem
 	FetchSamples() error
 	SampleNum() int
 	SampleInputFile(int) (*os.File, error)
