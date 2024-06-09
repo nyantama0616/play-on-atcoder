@@ -31,16 +31,24 @@ func NewSession() *Session {
 func (s *Session) Login(username, password string) error {
 	url := "https://atcoder.jp/login"
 
-	s.collector.OnHTML("form.form-horizontal", func(e *colly.HTMLElement) {
-		actionURL := e.Attr("action")
+	success := false
+	s.collector.OnHTML("form", func(e *colly.HTMLElement) {
+		if e.Attr("action") == "" {
+			// Fill in the form fields.
+			csrfToken := e.ChildAttr("input[name='csrf_token']", "value")
+			formData := make(map[string]string)
+			formData["username"] = username
+			formData["password"] = password
+			formData["csrf_token"] = csrfToken
 
-		// Fill in the form fields.
-		formData := make(map[string]string)
-		formData["username"] = username
-		formData["password"] = password
-
-		// Submit the form
-		s.collector.Post(actionURL, formData)
+			// Submit the form
+			err := s.collector.Post("https://atcoder.jp/login", formData)
+			if err != nil {
+				log.Fatal(err)
+			} else {
+				success = true
+			}
+		}
 	})
 
 	s.collector.OnResponse(func(r *colly.Response) {
@@ -55,6 +63,10 @@ func (s *Session) Login(username, password string) error {
 	err := s.collector.Visit(url)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if !success {
+		return fmt.Errorf("failed to login")
 	}
 
 	return err
@@ -101,6 +113,7 @@ func (s *Session) saveSessionId(cokkies []*http.Cookie) error {
 	defer file.Close()
 
 	for _, cookie := range cokkies {
+
 		if cookie.Name == "REVEL_SESSION" {
 			// session_idを保存
 			_, err := file.WriteString(cookie.Value)
