@@ -1,6 +1,7 @@
 package fetcher
 
 import (
+	"bufio"
 	"testing"
 
 	"github.com/nyantama0616/play-on-atcoder/problem"
@@ -39,18 +40,30 @@ func TestFetchSamples(t *testing.T) {
 	})
 
 	t.Run("サンプル1の入力は54である", func(t *testing.T) {
-		input, _ := fetcher.SampleInput(1)
+		fp, _ := fetcher.SampleInputFile(1)
+		defer fp.Close()
 
-		if input != "54" {
-			t.Errorf("input should be 54, but got %s", input)
+		scanner := bufio.NewScanner(fp)
+
+		scanner.Scan()
+		inputText := scanner.Text()
+
+		if inputText != "54" {
+			t.Errorf("input should be 54, but got %s", inputText)
 		}
 	})
 
 	t.Run("サンプル1の出力は6である", func(t *testing.T) {
-		output, _ := fetcher.SampleOutput(1)
+		fp, _ := fetcher.SampleOutputFile(1)
+		defer fp.Close()
 
-		if output != "6" {
-			t.Errorf("output should be 6, but got %s", output)
+		scanner := bufio.NewScanner(fp)
+
+		scanner.Scan()
+		inputText := scanner.Text()
+
+		if inputText != "6" {
+			t.Errorf("input should be 6, but got %s", inputText)
 		}
 	})
 

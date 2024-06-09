@@ -104,28 +104,22 @@ func (f *Fetcher) SampleNum() int {
 	return f.sampleNum
 }
 
-func (f *Fetcher) SampleInput(i int) (string, error) {
-	input, err := os.ReadFile(f.sampleInputFilePath(i))
+func (f *Fetcher) SampleInputFile(i int) (*os.File, error) {
+	file, err := os.Open(f.sampleInputFilePath(i))
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	// 末尾の改行を削除
-	inputStr := strings.TrimSuffix(string(input), "\n")
-
-	return inputStr, nil
+	return file, nil
 }
 
-func (f *Fetcher) SampleOutput(i int) (string, error) {
-	output, err := os.ReadFile(f.sampleOutputFilePath(i))
+func (f *Fetcher) SampleOutputFile(i int) (*os.File, error) {
+	file, err := os.Open(f.sampleOutputFilePath(i))
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	// 末尾の改行を削除
-	outputStr := strings.TrimSuffix(string(output), "\n")
-
-	return outputStr, nil
+	return file, nil
 }
 
 func (f *Fetcher) sampleDirPath(i int) string {

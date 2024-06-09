@@ -1,8 +1,10 @@
 package fetcher
 
+import "os"
+
 type IFetcher interface {
 	FetchSamples() error
 	SampleNum() int
-	SampleInput(int) (string, error)
-	SampleOutput(int) (string, error)
+	SampleInputFile(int) (*os.File, error)
+	SampleOutputFile(int) (*os.File, error)
 }
