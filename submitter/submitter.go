@@ -17,6 +17,10 @@ type Submitter struct {
 	cookies   []*http.Cookie //TODO: cookieの管理場所を考える
 }
 
+// SubmitterがISubmitterを実装していることを確認
+var _ ISubmitter = (*Submitter)(nil)
+
+// 新しいSubmitterを作成する
 func NewSubmitter(problem problem.IProblem, session session.ISession) *Submitter {
 	collector := colly.NewCollector()
 	cookies := []*http.Cookie{
@@ -34,6 +38,13 @@ func NewSubmitter(problem problem.IProblem, session session.ISession) *Submitter
 	}
 }
 
+/*
+ソースコードを提出する
+
+	file: ソースコードのファイル
+
+	提出に失敗にすると、エラーを返す
+*/
 func (s *Submitter) Submit(file *os.File) error {
 	url := s.problem.ProblemUrl()
 
@@ -48,7 +59,6 @@ func (s *Submitter) Submit(file *os.File) error {
 		}
 
 		actionUrl := fmt.Sprintf("https://atcoder.jp%s", action)
-		fmt.Println(actionUrl)
 
 		// // Fill in the form fields.
 		formData := make(map[string]string)
@@ -62,10 +72,11 @@ func (s *Submitter) Submit(file *os.File) error {
 
 		s.collector.OnHTMLDetach("form")
 
-		err := s.collector.Post(actionUrl, formData)
-		if err != nil {
-			fmt.Printf("Failed to post: %v\n", err)
-		} else {
+		s.collector.Post(actionUrl, formData)
+	})
+
+	s.collector.OnResponse(func(r *colly.Response) {
+		if r.StatusCode == 200 && r.Request.URL.String() == s.problem.SubmissionUrl() {
 			success = true
 		}
 	})
