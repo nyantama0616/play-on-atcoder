@@ -18,6 +18,9 @@ type Validator struct {
 // ValidatorがIValidatorを実装していることを確認
 var _ IValidator = (*Validator)(nil)
 
+/*
+新しいValidatorを作成する
+*/
 func NewValidator(fetcher fetcher.IFetcher, executor executor.IExecutor) *Validator {
 	outputDir := fmt.Sprintf("%s/validator/answers", fetcher.Problem().ProblemDirPath())
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
@@ -31,6 +34,9 @@ func NewValidator(fetcher fetcher.IFetcher, executor executor.IExecutor) *Valida
 	}
 }
 
+/*
+問題のサンプルケースを実行し、出力を比較する
+*/
 func (v *Validator) Validate(num int) (bool, error) {
 	input, err := v.fetcher.SampleInputFile(num)
 	if err != nil {
@@ -58,6 +64,7 @@ func (v *Validator) Validate(num int) (bool, error) {
 	return v.compareOutputs(outputExpected, output), nil
 }
 
+// サンプルケースの出力と実行結果を比較する
 func (v *Validator) compareOutputs(outputExpected *os.File, output *os.File) bool {
 	scannerOutputExpected := bufio.NewScanner(outputExpected)
 	scannerOutput := bufio.NewScanner(output)
