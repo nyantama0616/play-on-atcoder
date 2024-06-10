@@ -20,6 +20,11 @@ type Fetcher struct {
 // FetcherがIFetcherを実装していることを確認
 var _ IFetcher = (*Fetcher)(nil)
 
+/*
+新しいFetcherを作成する
+
+problem: 問題の情報を扱う構造体
+*/
 func NewFetcher(problem problem.IProblem) *Fetcher {
 	sampleContainerPath := fmt.Sprintf("%s/fetcher/samples", problem.ProblemDirPath())
 	if err := os.MkdirAll(sampleContainerPath, 0755); err != nil {
@@ -37,7 +42,11 @@ func (f *Fetcher) Problem() problem.IProblem {
 	return f.problem
 }
 
-// 問題ページからサンプルケースを取得する
+/*
+問題ページからサンプルケースを取得し、ファイルに保存する
+
+	既にサンプルケースを取得している場合は何もしない
+*/
 func (f *Fetcher) FetchSamples() error {
 	// 既にサンプルケースを取得している場合は何もしない
 	if f.hasAlreadyFetched() {
@@ -110,10 +119,12 @@ func (f *Fetcher) FetchSamples() error {
 	return nil
 }
 
+// Fetchしたサンプルケースの数を返す
 func (f *Fetcher) SampleNum() int {
 	return f.sampleNum
 }
 
+// サンプルiの入力ファイルを返す
 func (f *Fetcher) SampleInputFile(i int) (*os.File, error) {
 	file, err := os.Open(f.sampleInputFilePath(i))
 	if err != nil {
@@ -123,6 +134,7 @@ func (f *Fetcher) SampleInputFile(i int) (*os.File, error) {
 	return file, nil
 }
 
+// サンプルiの出力ファイルを返す
 func (f *Fetcher) SampleOutputFile(i int) (*os.File, error) {
 	file, err := os.Open(f.sampleOutputFilePath(i))
 	if err != nil {
@@ -132,18 +144,38 @@ func (f *Fetcher) SampleOutputFile(i int) (*os.File, error) {
 	return file, nil
 }
 
+/*
+サンプルケースのディレクトリのパスを返す
+
+	例: contests/abc000/a/case1
+*/
 func (f *Fetcher) sampleDirPath(i int) string {
 	return fmt.Sprintf("%s/case%d", f.sampleContainerPath, i)
 }
 
+/*
+サンプルケースの入力ファイルのパスを返す
+
+	例: contests/abc000/a/case1/input.txt
+*/
 func (f *Fetcher) sampleInputFilePath(i int) string {
 	return fmt.Sprintf("%s/input.txt", f.sampleDirPath(i))
 }
 
+/*
+サンプルケースの出力ファイルのパスを返す
+
+	例: contests/abc000/a/case1/output.txt
+*/
 func (f *Fetcher) sampleOutputFilePath(i int) string {
 	return fmt.Sprintf("%s/output.txt", f.sampleDirPath(i))
 }
 
+/*
+既にサンプルケースを取得しているかを返す
+
+	既にサンプルケースを取得している場合はtrue、そうでない場合はfalseを返す
+*/
 func (f *Fetcher) hasAlreadyFetched() bool {
 	_, err := os.Stat(f.sampleInputFilePath(1))
 	return err == nil

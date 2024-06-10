@@ -2,9 +2,11 @@ package fetcher
 
 import (
 	"bufio"
+	"fmt"
 	"testing"
 
 	"github.com/nyantama0616/play-on-atcoder/problem"
+	"github.com/nyantama0616/play-on-atcoder/setting"
 )
 
 func TestNewFetcher(t *testing.T) {
@@ -75,6 +77,26 @@ func TestFetchSamples(t *testing.T) {
 
 		if fetcher.SampleNum() != 3 {
 			t.Errorf("sampleNum should be 3, but got %d", fetcher.SampleNum())
+		}
+	})
+
+	t.Run("サンプル1の入力ファイルのパスが正しい", func(t *testing.T) {
+		fp, _ := fetcher.SampleInputFile(1)
+		defer fp.Close()
+
+		expected := fmt.Sprintf("%s/contests/abc354/a/fetcher/samples/case1/input.txt", setting.RootDir)
+		if fp.Name() != expected {
+			t.Errorf("input file path should be %s, but got %s", expected, fp.Name())
+		}
+	})
+
+	t.Run("サンプル1の出力ファイルのパスが正しい", func(t *testing.T) {
+		fp, _ := fetcher.SampleOutputFile(1)
+		defer fp.Close()
+
+		expected := fmt.Sprintf("%s/contests/abc354/a/fetcher/samples/case1/output.txt", setting.RootDir)
+		if fp.Name() != expected {
+			t.Errorf("output file path should be %s, but got %s", expected, fp.Name())
 		}
 	})
 }
