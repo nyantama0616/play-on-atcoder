@@ -20,12 +20,21 @@ type ExecutorCpp struct {
 // IExecutorを実装しているか確認
 var _ executor.IExecutor = (*ExecutorCpp)(nil)
 
+// ソースコードのパス
 type SourceCodePath struct {
-	MainPath       string
+	// メインのソースコードのパス
+	MainPath string
+
+	// ヘッダーファイルのパス
 	IncludeDirPath string
 }
 
 // TODO: sourceCodePathにデフォルト値を設定したい
+/*
+	新しいExecutorCppを作成する
+	problem: 問題の情報を扱う構造体
+	sourceCodePath: ソースコードのパス
+*/
 func NewExecutorCpp(problem problem.IProblem, sourceCodePath SourceCodePath) *ExecutorCpp {
 	outputDirPath := fmt.Sprintf("%s/executor", problem.ProblemDirPath())
 	destCppPath := fmt.Sprintf("%s/dest.cpp", outputDirPath)
@@ -40,6 +49,7 @@ func NewExecutorCpp(problem problem.IProblem, sourceCodePath SourceCodePath) *Ex
 	}
 }
 
+// ソースコードをコンパイルし、実行可能にする
 func (e *ExecutorCpp) Compile() error {
 	err := e.Arrange()
 	if err != nil {
@@ -56,6 +66,11 @@ func (e *ExecutorCpp) Compile() error {
 	return nil
 }
 
+/* ソースコードを実行する
+ * reader: 標準入力
+ * writer: 標準出力
+ * errorWriter: 標準エラー出力
+ */
 func (e *ExecutorCpp) Execute(reader io.Reader, writer io.Writer, errorWriter io.Writer) error {
 	cmd := exec.Command(e.outputDirPath + "/dest")
 	cmd.Stdin = reader
@@ -70,6 +85,7 @@ func (e *ExecutorCpp) Execute(reader io.Reader, writer io.Writer, errorWriter io
 	return nil
 }
 
+// 提出可能なソースコードを用意する
 func (e *ExecutorCpp) Arrange() error {
 	sourceCode, err := os.ReadFile(e.sourceCodePath.MainPath) // ファイル全体を読み込む
 	if err != nil {
@@ -106,6 +122,7 @@ func (e *ExecutorCpp) Arrange() error {
 	return nil
 }
 
+// ソースコード
 func (e *ExecutorCpp) ArrangedFile() (*os.File, error) {
 	return os.Open(e.destCppPath)
 }
