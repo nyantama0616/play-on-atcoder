@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gocolly/colly"
 	"github.com/nyantama0616/play-on-atcoder/setting"
@@ -22,6 +23,15 @@ var _ ISession = (*Session)(nil)
 func NewSession() *Session {
 	c := colly.NewCollector()
 	c.AllowURLRevisit = true // 同じURLに何度もアクセスすることを許可(複数回のログイン試行を可能にするため)
+
+	// request間のディレイを設定
+	// 複数回のログイン試行を可能にするため
+	c.Limit(&colly.LimitRule{
+		// Filter domains affected by this rule
+		DomainGlob: "*",
+		// Set a delay between requests to these domains
+		Delay: 1 * time.Second,
+	})
 
 	sessionIdPath := fmt.Sprintf("%s/secrets/session_id.txt", setting.RootDir)
 
@@ -111,16 +121,12 @@ func (s *Session) login(username, password string) error {
 	})
 
 	s.collector.OnResponse(func(r *colly.Response) {
-		fmt.Println("response")
-		fmt.Println(r.Request.URL.String())
-		fmt.Println(r.Request.Method)
-		fmt.Println(r.StatusCode)
-
 		if s.successLogin(r) {
 			// クッキーを保存
 			cookies := s.collector.Cookies(url)
 			s.saveSessionId(cookies)
 			success = true
+			fmt.Println("Login successful!")
 		}
 	})
 
