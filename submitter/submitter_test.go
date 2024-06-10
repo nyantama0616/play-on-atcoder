@@ -12,6 +12,8 @@ import (
 
 func TestSubmit(t *testing.T) {
 	problem, _ := problem.NewProblem("abc354_a")
+	defer problem.RemoveProblemDir()
+
 	session := session.NewSession()
 
 	executor := cpp.NewExecutorCpp(problem, cpp.SourceCodePath{
