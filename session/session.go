@@ -79,6 +79,14 @@ func (s *Session) SessionId() string {
 	return string(buf[:n])
 }
 
+// 環境変数を読み込んでログインする
+func (s *Session) LoginWithEnv() error {
+	username := os.Getenv("ATCODER_USERNAME")
+	password := os.Getenv("ATCODER_PASSWORD")
+
+	return s.login(username, password)
+}
+
 func (s *Session) login(username, password string) error {
 	url := "https://atcoder.jp/login"
 

@@ -41,3 +41,15 @@ func TestLogin(t *testing.T) {
 		}
 	})
 }
+
+func TestLoginWithEnv(t *testing.T) {
+	s := NewSession()
+
+	err := s.LoginWithEnv()
+
+	t.Run("ログインが成功する", func(t *testing.T) {
+		if err != nil {
+			t.Errorf("err should be nil, but got %v", err)
+		}
+	})
+}

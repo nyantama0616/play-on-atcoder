@@ -12,4 +12,7 @@ type ISession interface {
 
 	// セッションIDを返す
 	SessionId() string
+
+	// 環境変数を読み込んでログインする
+	LoginWithEnv() error
 }
