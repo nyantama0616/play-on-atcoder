@@ -15,6 +15,12 @@ func TestSubmit(t *testing.T) {
 	defer problem.RemoveProblemDir()
 
 	session := session.NewSession()
+	if !session.IsLoggedIn() {
+		err := session.LoginWithEnv()
+		if err != nil {
+			t.Errorf("Login() should return nil, but got %v", err)
+		}
+	}
 
 	executor := cpp.NewExecutorCpp(problem, cpp.SourceCodePath{
 		MainPath:       fmt.Sprintf("%s/executor/cpp/assets/main.cpp", setting.RootDir),
@@ -25,8 +31,9 @@ func TestSubmit(t *testing.T) {
 	executor.Arrange()
 	sourceFile, _ := executor.ArrangedFile()
 	defer sourceFile.Close()
+	language := "C++ 20 (gcc 12.2)"
 
-	err := submitter.Submit(sourceFile)
+	err := submitter.Submit(language, sourceFile)
 	if err != nil {
 		t.Errorf("Submit() should return nil, but got %v", err)
 	}

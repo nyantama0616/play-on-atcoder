@@ -45,7 +45,7 @@ func NewSubmitter(problem problem.IProblem, session session.ISession) *Submitter
 
 	提出に失敗にすると、エラーを返す
 */
-func (s *Submitter) Submit(file *os.File) error {
+func (s *Submitter) Submit(language string, file *os.File) error {
 	url := s.problem.ProblemUrl()
 
 	sourceCode, _ := os.ReadFile(file.Name())
@@ -62,9 +62,18 @@ func (s *Submitter) Submit(file *os.File) error {
 
 		// // Fill in the form fields.
 		formData := make(map[string]string)
+
+		// 言語を選択
+		languageId := ""
+		e.ForEach("select[name='data.LanguageId'] option", func(_ int, e *colly.HTMLElement) {
+			if e.Text == language {
+				languageId = e.Attr("value")
+			}
+		})
+
 		csrf_token := e.ChildAttr("input[name='csrf_token']", "value")
 		formData["data.TaskScreenName"] = s.problem.ProblemId()
-		formData["data.LanguageId"] = "5001"
+		formData["data.LanguageId"] = languageId
 		formData["sourceCode"] = string(sourceCode)
 		formData["csrf_token"] = csrf_token
 
@@ -76,9 +85,13 @@ func (s *Submitter) Submit(file *os.File) error {
 	})
 
 	s.collector.OnResponse(func(r *colly.Response) {
-		if r.StatusCode == 200 && r.Request.URL.String() == s.problem.SubmissionUrl() {
+		if s.successSubmit(r) {
 			success = true
 		}
+
+		// if r.StatusCode != 200 {
+		// }
+		fmt.Printf("status code: %d\n", r.StatusCode)
 	})
 
 	s.collector.SetCookies(url, s.cookies)
@@ -87,11 +100,15 @@ func (s *Submitter) Submit(file *os.File) error {
 	if err != nil {
 		return fmt.Errorf("failed to visit: %v", err)
 	}
-	fmt.Printf("Vosited %s\n", url)
+	fmt.Printf("Visited %s\n", url)
 
 	if !success {
 		return fmt.Errorf("failed to submit")
 	}
 
 	return nil
+}
+
+func (s *Submitter) successSubmit(r *colly.Response) bool {
+	return r.StatusCode == 200 && r.Request.URL.String() == s.problem.SubmissionUrl()
 }
