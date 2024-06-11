@@ -51,5 +51,9 @@ func (p *MockProblem) ProblemUrl() string {
 }
 
 func (p *MockProblem) SubmissionUrl() string {
-	return ""
+	return fmt.Sprintf("http://localhost:%d/contests/abc354/submissions/me", setting.MockServerPort)
+}
+
+func (p *MockProblem) RootUrl() string {
+	return fmt.Sprintf("http://localhost:%d", setting.MockServerPort)
 }

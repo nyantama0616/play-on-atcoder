@@ -15,6 +15,7 @@ type Problem struct {
 	contestName    string
 	rank           string
 	contestDirPath string
+	rootUrl        string
 }
 
 // ProblemがIProblemを実装していることをコンパイル時に確認
@@ -43,6 +44,7 @@ func NewProblem(problemId string) (*Problem, error) {
 		contestName:    contestName,
 		rank:           rank,
 		contestDirPath: contestDirPath,
+		rootUrl:        "https://atcoder.jp",
 	}
 
 	problem.CreateProblemDir()
@@ -101,7 +103,7 @@ func (p *Problem) ProblemDirPath() string {
 	例: "https://atcoder.jp/contests/abc100/tasks/abc100_a"
 */
 func (p *Problem) ProblemUrl() string {
-	return fmt.Sprintf("https://atcoder.jp/contests/%s/tasks/%s", p.ContestName(), p.ProblemId())
+	return fmt.Sprintf("%s/contests/%s/tasks/%s", p.RootUrl(), p.ContestName(), p.ProblemId())
 }
 
 /*
@@ -110,7 +112,7 @@ func (p *Problem) ProblemUrl() string {
 	例: "https://atcoder.jp/contests/abc100/submissions/me"
 */
 func (p *Problem) SubmissionUrl() string {
-	return fmt.Sprintf("https://atcoder.jp/contests/%s/submissions/me", p.ContestName())
+	return fmt.Sprintf("%s/contests/%s/submissions/me", p.RootUrl(), p.ContestName())
 }
 
 /*
@@ -175,4 +177,8 @@ func validateProblemId(problemId string) error {
 	}
 
 	return nil
+}
+
+func (p *Problem) RootUrl() string {
+	return p.rootUrl
 }

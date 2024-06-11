@@ -96,6 +96,13 @@ func TestGetter(t *testing.T) {
 			t.Errorf("SubmissionUrl should be %s, but got %s", expected, problem.SubmissionUrl())
 		}
 	})
+
+	t.Run("RootUrl()で問題情報を取得するサーバのルートURLが取得できる", func(t *testing.T) {
+		expected := "https://atcoder.jp"
+		if problem.RootUrl() != expected {
+			t.Errorf("RootUrl should be %s, but got %s", expected, problem.RootUrl())
+		}
+	})
 }
 
 func TestCreateProblemDir(t *testing.T) {

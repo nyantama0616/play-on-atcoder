@@ -5,13 +5,19 @@ import (
 	"testing"
 
 	"github.com/nyantama0616/play-on-atcoder/executor/cpp"
-	"github.com/nyantama0616/play-on-atcoder/problem"
+	"github.com/nyantama0616/play-on-atcoder/mock"
+	"github.com/nyantama0616/play-on-atcoder/mock/server"
 	"github.com/nyantama0616/play-on-atcoder/session"
 	"github.com/nyantama0616/play-on-atcoder/setting"
 )
 
 func TestSubmit(t *testing.T) {
-	problem, _ := problem.NewProblem("abc354_a")
+	server := server.NewAtcoderServer(mock.NewMockProblem())
+	listen := server.Setup()
+	defer listen.Close()
+
+	problem := mock.NewMockProblem()
+	// problem, _ := problem.NewProblem("abc354_a")
 	defer problem.RemoveProblemDir()
 
 	session := session.NewSession()

@@ -51,4 +51,9 @@ type IProblem interface {
 			例: "contests/abc100/a"
 	*/
 	RemoveProblemDir() error
+
+	/*
+		問題情報を取得するサーバのルートURLを取得する
+	*/
+	RootUrl() string
 }

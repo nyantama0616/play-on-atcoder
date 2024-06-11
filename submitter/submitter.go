@@ -8,13 +8,16 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/nyantama0616/play-on-atcoder/problem"
 	"github.com/nyantama0616/play-on-atcoder/session"
+	"github.com/nyantama0616/play-on-atcoder/setting"
 )
 
 type Submitter struct {
-	problem   problem.IProblem
-	session   session.ISession
-	collector *colly.Collector
-	cookies   []*http.Cookie //TODO: cookieの管理場所を考える
+	problem    problem.IProblem
+	session    session.ISession
+	collector  *colly.Collector
+	cookies    []*http.Cookie //TODO: cookieの管理場所を考える
+	formData   map[string]string
+	retryCount int
 }
 
 // SubmitterがISubmitterを実装していることを確認
@@ -29,12 +32,15 @@ func NewSubmitter(problem problem.IProblem, session session.ISession) *Submitter
 			Value: session.SessionId(),
 		},
 	}
+	formData := make(map[string]string)
 
 	return &Submitter{
-		problem:   problem,
-		session:   session,
-		collector: collector,
-		cookies:   cookies,
+		problem:    problem,
+		session:    session,
+		collector:  collector,
+		cookies:    cookies,
+		formData:   formData,
+		retryCount: setting.APIMaxRetry,
 	}
 }
 
@@ -46,8 +52,6 @@ func NewSubmitter(problem problem.IProblem, session session.ISession) *Submitter
 	提出に失敗にすると、エラーを返す
 */
 func (s *Submitter) Submit(language string, file *os.File) error {
-	url := s.problem.ProblemUrl()
-
 	sourceCode, _ := os.ReadFile(file.Name())
 
 	success := false
@@ -58,41 +62,45 @@ func (s *Submitter) Submit(language string, file *os.File) error {
 			return
 		}
 
-		actionUrl := fmt.Sprintf("https://atcoder.jp%s", action)
+		actionUrl := fmt.Sprintf("%s%s", s.problem.RootUrl(), action)
 
 		// // Fill in the form fields.
-		formData := make(map[string]string)
 
 		// 言語を選択
 		languageId := ""
 		e.ForEach("select[name='data.LanguageId'] option", func(_ int, e *colly.HTMLElement) {
 			if e.Text == language {
+				fmt.Println("Language found!")
 				languageId = e.Attr("value")
 			}
 		})
 
 		csrf_token := e.ChildAttr("input[name='csrf_token']", "value")
-		formData["data.TaskScreenName"] = s.problem.ProblemId()
-		formData["data.LanguageId"] = languageId
-		formData["sourceCode"] = string(sourceCode)
-		formData["csrf_token"] = csrf_token
+		s.formData["data.TaskScreenName"] = s.problem.ProblemId()
+		s.formData["data.LanguageId"] = languageId
+		s.formData["sourceCode"] = string(sourceCode)
+		s.formData["csrf_token"] = csrf_token
 
 		s.collector.SetCookies(actionUrl, s.cookies)
 
 		s.collector.OnHTMLDetach("form")
 
-		s.collector.Post(actionUrl, formData)
+		s.collector.Post(actionUrl, s.formData)
 	})
 
 	s.collector.OnResponse(func(r *colly.Response) {
 		if s.successSubmit(r) {
 			success = true
+		} else if r.Request.Method == "POST" {
+			//リトライ
+			s.retryCount--
+			if s.retryCount > 0 {
+				s.collector.Post(r.Request.URL.String(), s.formData)
+			}
 		}
-
-		// if r.StatusCode != 200 {
-		// }
-		fmt.Printf("status code: %d\n", r.StatusCode)
 	})
+
+	url := s.problem.ProblemUrl()
 
 	s.collector.SetCookies(url, s.cookies)
 

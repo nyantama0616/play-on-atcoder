@@ -8,7 +8,7 @@ import (
 	"github.com/nyantama0616/play-on-atcoder/setting"
 )
 
-// AtCoderの問題ページを模したサーバ
+// AtCoderのサイトを模したサーバー
 type IAtcoderServer interface {
 	Problem() problem.IProblem
 	Setup() *http.Server
@@ -35,6 +35,8 @@ func (s *AtcoderServer) Problem() problem.IProblem {
 func (s *AtcoderServer) Setup() *http.Server {
 	handler := http.NewServeMux()
 	handler.HandleFunc("/problem", handleGetProblem)
+	handler.HandleFunc("/contests/abc354/submit", handlePostSubmit)
+	handler.HandleFunc("/contests/abc354/submissions/me", handlePostSubmissionsMe)
 
 	server := &http.Server{
 		Addr:    fmt.Sprintf("localhost:%d", setting.MockServerPort),
@@ -65,7 +67,22 @@ func handleGetProblem(w http.ResponseWriter, r *http.Request) {
 			<pre>262144</pre>
 			<h3>出力例 3</h3>
 			<pre>19</pre>
+
+			<form action="/contests/abc354/submit" method="POST">
+				<select name="data.LanguageId">
+					<option value="5001">C++ 20 (gcc 12.2)</option>
+				</select>
+				<input name="csrf_token" value="csrf_token">
+			</form>
 	</body>
 </html>
 		`))
+}
+
+func handlePostSubmit(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/contests/abc354/submissions/me", http.StatusSeeOther)
+}
+
+func handlePostSubmissionsMe(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
 }
