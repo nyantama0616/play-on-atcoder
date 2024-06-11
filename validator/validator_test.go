@@ -6,16 +6,24 @@ import (
 
 	. "github.com/nyantama0616/play-on-atcoder/executor/cpp"
 	. "github.com/nyantama0616/play-on-atcoder/fetcher"
-	. "github.com/nyantama0616/play-on-atcoder/problem"
+	"github.com/nyantama0616/play-on-atcoder/mock"
+	"github.com/nyantama0616/play-on-atcoder/mock/server"
 	"github.com/nyantama0616/play-on-atcoder/setting"
 )
 
 func TestValidate(t *testing.T) {
-	problem, _ := NewProblem("abc354_a")
+	server := server.NewAtcoderServer(mock.NewMockProblem())
+	listen := server.Setup()
+	defer listen.Close()
+
+	problem := mock.NewMockProblem()
 	defer problem.RemoveProblemDir()
 
 	fetcher := NewFetcher(problem)
-	fetcher.FetchSamples()
+	err := fetcher.FetchSamples()
+	if err != nil {
+		t.Errorf("FetchSamples() failed: %v", err)
+	}
 
 	executorCpp := NewExecutorCpp(
 		problem,
@@ -25,9 +33,9 @@ func TestValidate(t *testing.T) {
 		},
 	)
 
-	err := executorCpp.Compile()
+	err = executorCpp.Compile()
 	if err != nil {
-		t.Errorf("Compile() failed: %v", err)
+		t.Errorf("%v", err)
 	}
 
 	validator := NewValidator(fetcher, executorCpp)
