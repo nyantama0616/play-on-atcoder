@@ -5,14 +5,18 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/nyantama0616/play-on-atcoder/problem"
+	"github.com/nyantama0616/play-on-atcoder/mock"
+	"github.com/nyantama0616/play-on-atcoder/mock/server"
 	"github.com/nyantama0616/play-on-atcoder/setting"
 )
 
 func TestNewFetcher(t *testing.T) {
+	server := server.NewAtcoderServer(mock.NewMockProblem())
+	listen := server.Setup()
+	defer listen.Close()
+
 	t.Run("正しいproblemを渡すとFetcherが生成される", func(t *testing.T) {
-		problemId := "abc100_a"
-		problem, _ := problem.NewProblem(problemId)
+		problem := mock.NewMockProblem()
 		defer problem.RemoveProblemDir()
 
 		fetcher := NewFetcher(problem)
@@ -24,8 +28,11 @@ func TestNewFetcher(t *testing.T) {
 }
 
 func TestFetchSamples(t *testing.T) {
-	problemId := "abc354_a"
-	problem, _ := problem.NewProblem(problemId)
+	server := server.NewAtcoderServer(mock.NewMockProblem())
+	listen := server.Setup()
+	defer listen.Close()
+
+	problem := mock.NewMockProblem()
 	defer problem.RemoveProblemDir()
 
 	fetcher := NewFetcher(problem)
