@@ -6,9 +6,11 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/nyantama0616/play-on-atcoder/problem"
+	"github.com/nyantama0616/play-on-atcoder/setting"
 )
 
 type Fetcher struct {
@@ -65,13 +67,24 @@ func (f *Fetcher) FetchSamples() error {
 	// 問題ページのURLを取得
 	url := f.problem.ProblemUrl()
 
-	// HTTPリクエストを送信してHTMLを取得
-	resp, err := http.Get(url)
+	/* HTTPリクエストを送信してHTMLを取得
+	リトライ処理を行っている
+	*/
+	var resp *http.Response
+	var err error
+	for i := 0; i < setting.APIMaxRetry; i++ {
+		resp, err = http.Get(url)
+		if err == nil && resp.StatusCode == 200 {
+			break
+		}
+		if resp != nil {
+			defer resp.Body.Close()
+		}
+		time.Sleep(setting.APIRetryInterval)
+	}
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
-
 	if resp.StatusCode != 200 {
 		return err
 	}

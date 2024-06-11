@@ -11,10 +11,6 @@ import (
 )
 
 func TestNewFetcher(t *testing.T) {
-	server := server.NewAtcoderServer(mock.NewMockProblem())
-	listen := server.Setup()
-	defer listen.Close()
-
 	t.Run("正しいproblemを渡すとFetcherが生成される", func(t *testing.T) {
 		problem := mock.NewMockProblem()
 		defer problem.RemoveProblemDir()
