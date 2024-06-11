@@ -21,12 +21,6 @@ func TestSubmit(t *testing.T) {
 	defer problem.RemoveProblemDir()
 
 	session := session.NewSession()
-	if !session.IsLoggedIn() {
-		err := session.LoginWithEnv()
-		if err != nil {
-			t.Errorf("Login() should return nil, but got %v", err)
-		}
-	}
 
 	executor := cpp.NewExecutorCpp(problem, cpp.SourceCodePath{
 		MainPath:       fmt.Sprintf("%s/executor/cpp/assets/main.cpp", setting.RootDir),
