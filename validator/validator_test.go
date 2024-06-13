@@ -33,6 +33,8 @@ func TestValidate(t *testing.T) {
 		},
 	)
 
+	executorCpp.Arrange()
+
 	err = executorCpp.Compile()
 	if err != nil {
 		t.Errorf("%v", err)
