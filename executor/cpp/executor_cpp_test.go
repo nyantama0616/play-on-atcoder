@@ -5,12 +5,12 @@ import (
 	"os"
 	"testing"
 
-	. "github.com/nyantama0616/play-on-atcoder/problem"
+	"github.com/nyantama0616/play-on-atcoder/mock"
 	"github.com/nyantama0616/play-on-atcoder/setting"
 )
 
 func TestArrange(t *testing.T) {
-	problem, _ := NewProblem("abc354_a")
+	problem := mock.NewMockProblem()
 	defer problem.RemoveProblemDir()
 
 	executorCpp := NewExecutorCpp(
@@ -43,7 +43,7 @@ func TestArrange(t *testing.T) {
 }
 
 func TestExecute(t *testing.T) {
-	problem, _ := NewProblem("abc354_c")
+	problem := mock.NewMockProblem()
 	defer problem.RemoveProblemDir()
 
 	executorCpp := NewExecutorCpp(
@@ -54,6 +54,7 @@ func TestExecute(t *testing.T) {
 		},
 	)
 
+	executorCpp.Arrange()
 	executorCpp.Compile()
 
 	inputFilePath := fmt.Sprintf("%s/executor/cpp/assets/input.txt", setting.RootDir)

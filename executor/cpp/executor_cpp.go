@@ -36,7 +36,7 @@ type SourceCodePath struct {
 	sourceCodePath: ソースコードのパス
 */
 func NewExecutorCpp(problem problem.IProblem, sourceCodePath SourceCodePath) *ExecutorCpp {
-	outputDirPath := fmt.Sprintf("%s/executor", problem.ProblemDirPath())
+	outputDirPath := fmt.Sprintf("%s/executor/cpp", problem.ProblemDirPath())
 	destCppPath := fmt.Sprintf("%s/dest.cpp", outputDirPath)
 
 	//フォルダが存在しない場合は作成
@@ -51,13 +51,8 @@ func NewExecutorCpp(problem problem.IProblem, sourceCodePath SourceCodePath) *Ex
 
 // ソースコードをコンパイルし、実行可能にする
 func (e *ExecutorCpp) Compile() error {
-	err := e.Arrange()
-	if err != nil {
-		return fmt.Errorf("failed to Arrange: %v", err)
-	}
-
 	cmd := exec.Command("g++-14", "-std=gnu++20", "-Wall", "-Wextra", "-O2", "-DONLINE_JUDGE", "-I", e.sourceCodePath.IncludeDirPath, "-o", e.outputDirPath+"/dest", e.destCppPath)
-	_, err = cmd.CombinedOutput()
+	_, err := cmd.CombinedOutput()
 
 	if err != nil {
 		return fmt.Errorf("failed to compile: %v", err)
