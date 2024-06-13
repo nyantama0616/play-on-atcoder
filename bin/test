@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# すべてのパッケージを逐次的にテストする
+# 各テストはファイルの変更に依存し、go test ./...では全てのテストが通らない
+for pkg in $(go list ./...); do
+    go test $pkg
+done
