@@ -29,6 +29,11 @@ type IProblem interface {
 	ProblemDirPath() string
 
 	/*
+		コンテストのディレクトリのパスを取得する
+	*/
+	ContestDirPath() string
+
+	/*
 		問題のURLを取得する
 			例: "https://atcoder.jp/contests/abc100/tasks/abc100_a"
 	*/

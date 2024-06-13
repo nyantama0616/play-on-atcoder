@@ -43,7 +43,33 @@ func (p *MockProblem) CreateProblemDir() error {
 }
 
 func (p *MockProblem) RemoveProblemDir() error {
-	return os.RemoveAll(p.ProblemDirPath())
+	// problemディレクトリが存在する場合、problemディレクトリを削除する
+	if _, err := os.Stat(p.ProblemDirPath()); err == nil {
+		err := os.RemoveAll(p.ProblemDirPath())
+		if err != nil {
+			return err
+		}
+	}
+
+	// contestディレクトリが存在し、かつ空の場合、contestディレクトリを削除する
+	if _, err := os.Stat(p.ContestDirPath()); err == nil {
+		files, err := os.ReadDir(p.ContestDirPath())
+		if err != nil {
+			return err
+		}
+		if len(files) == 0 {
+			err := os.RemoveAll(p.ContestDirPath())
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (p *MockProblem) ContestDirPath() string {
+	return fmt.Sprintf("%s/contests/%s", setting.RootDir, p.ContestName())
 }
 
 func (p *MockProblem) ProblemUrl() string {
