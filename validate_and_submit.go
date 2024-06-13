@@ -60,12 +60,13 @@ func main() {
 		}
 		if ok {
 			acCount++
-			fmt.Printf("Sample%d is \033[32mAC\033[0m\n", i+1)
+			fmt.Printf("Sample%d is \033[32mAC\033[0m\n", i+1) // ACを緑色で表示
 		} else {
-			fmt.Printf("Sample%d is \033[31mWA\033[0m\n", i+1)
+			fmt.Printf("Sample%d is \033[31mWA\033[0m\n", i+1) // WAを赤色で表示
 		}
 	}
 
+	// 全てのサンプルがACなら提出
 	if acCount == fetcher.SampleNum() {
 		fmt.Println("All samples are AC")
 

@@ -23,6 +23,12 @@ type SourceCodePath struct {
 // IExecutorを実装しているか確認
 var _ executor.IExecutor = (*ExecutorGolang)(nil)
 
+/*
+新しいExecutorGolangを作成する
+
+	problem: 問題の情報を扱う構造体
+	sourceCodePath: ソースコードのパス
+*/
 func NewExecutorGolang(problem problem.IProblem, sourceCodePath SourceCodePath) *ExecutorGolang {
 	outputDirPath := fmt.Sprintf("%s/executor/golang", problem.ProblemDirPath())
 	destGoPath := fmt.Sprintf("%s/dest.go", outputDirPath)
@@ -60,6 +66,7 @@ func (e *ExecutorGolang) Arrange() error {
 	return nil
 }
 
+// ソースコードをコンパイルし、実行可能にする
 func (e *ExecutorGolang) Compile() error {
 	cmd := exec.Command("bash", "-c", "cd "+e.outputDirPath+" && go build -o dest")
 	_, err := cmd.CombinedOutput()
@@ -71,6 +78,11 @@ func (e *ExecutorGolang) Compile() error {
 	return nil
 }
 
+/* ソースコードを実行する
+ * reader: 標準入力
+ * writer: 標準出力
+ * errorWriter: 標準エラー出力
+ */
 func (e *ExecutorGolang) Execute(reader io.Reader, writer io.Writer, errorWriter io.Writer) error {
 	cmd := exec.Command(e.outputDirPath + "/dest")
 	cmd.Stdin = reader
@@ -85,6 +97,7 @@ func (e *ExecutorGolang) Execute(reader io.Reader, writer io.Writer, errorWriter
 	return nil
 }
 
+// ソースコードを提出可能な形に整形したファイルを返す
 func (e *ExecutorGolang) ArrangedFile() (*os.File, error) {
 	return os.Open(e.destGoPath)
 }
