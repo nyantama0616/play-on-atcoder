@@ -23,6 +23,16 @@ func TestNewFetcher(t *testing.T) {
 	})
 }
 
+/*
+LookAtMe-4:
+
+interfaceの活用例2: Mockを作成する
+
+fetcherはAtCoderの問題ページからサンプルを取得するが、テストの度にAtCoderのサーバーにアクセスするのはあんまりよくない。
+そこで、Atcoderサーバのモックを作成し、それを使ってテストを行う。
+
+MockProblemは、本物のAtCoderの問題ページの情報ではなく、モックサーバーの情報を返す。
+*/
 func TestFetchSamples(t *testing.T) {
 	server := server.NewAtcoderServer(mock.NewMockProblem())
 	listen := server.Setup()

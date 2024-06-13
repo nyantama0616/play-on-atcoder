@@ -19,8 +19,20 @@ type Validator struct {
 var _ IValidator = (*Validator)(nil)
 
 /*
-新しいValidatorを作成する
+LookAtMe-4:
+
+interfaceの活用例1: 挙動の変更を容易にする
+
+interfaceという概念について詳しく学ぼう。
+interfaceを使うことの最大のメリットは、「実装を隠蔽できる」ことである。
+
+この説明での主要人物はvalidatorパッケージとexecutorパッケージである。
+executorは、ソースコードをコンパイルし、実行するための機能を提供する。
+ここで、ソースコードのコンパイル方法や実行方法はプログラミング言語によって異なる。
+validatorはIExecutorに依存しているだけで、ソースコードのコンパイル方法や実行方法については知らない。
+これにより、NewValidatorに渡すexecutorを変更するだけで、あらゆるプログラミング言語に対応できる。
 */
+// 新しいValidatorを作成する
 func NewValidator(fetcher fetcher.IFetcher, executor executor.IExecutor) *Validator {
 	outputDir := fmt.Sprintf("%s/validator/answers", fetcher.Problem().ProblemDirPath())
 	if err := os.MkdirAll(outputDir, 0755); err != nil {

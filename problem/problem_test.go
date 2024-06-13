@@ -1,3 +1,9 @@
+/* LookAtMe-2:
+interfaceを定義したら、そのパッケージのテストを書く
+
+テストを書くことで、そのパッケージが正しく動作するか確認できる
+*/
+
 package problem
 
 import (
