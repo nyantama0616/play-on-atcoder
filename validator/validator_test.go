@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	. "github.com/nyantama0616/play-on-atcoder/executor/cpp"
+	"github.com/nyantama0616/play-on-atcoder/executor/golang"
 	. "github.com/nyantama0616/play-on-atcoder/fetcher"
 	"github.com/nyantama0616/play-on-atcoder/mock"
 	"github.com/nyantama0616/play-on-atcoder/mock/server"
@@ -25,22 +25,21 @@ func TestValidate(t *testing.T) {
 		t.Errorf("FetchSamples() failed: %v", err)
 	}
 
-	executorCpp := NewExecutorCpp(
+	executor := golang.NewExecutorGolang(
 		problem,
-		SourceCodePath{
-			MainPath:       fmt.Sprintf("%s/executor/cpp/assets/main.cpp", setting.RootDir),
-			IncludeDirPath: fmt.Sprintf("%s/executor/cpp/assets/include", setting.RootDir),
+		golang.SourceCodePath{
+			MainPath: fmt.Sprintf("%s/executor/golang/_assets/main.go", setting.RootDir),
 		},
 	)
 
-	executorCpp.Arrange()
+	executor.Arrange()
 
-	err = executorCpp.Compile()
+	err = executor.Compile()
 	if err != nil {
 		t.Errorf("%v", err)
 	}
 
-	validator := NewValidator(fetcher, executorCpp)
+	validator := NewValidator(fetcher, executor)
 
 	t.Run("すべてのサンプルがACになる", func(t *testing.T) {
 		for i := 0; i < fetcher.SampleNum(); i++ {

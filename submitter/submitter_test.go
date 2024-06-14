@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/nyantama0616/play-on-atcoder/executor/cpp"
+	"github.com/nyantama0616/play-on-atcoder/executor/golang"
 	"github.com/nyantama0616/play-on-atcoder/mock"
 	"github.com/nyantama0616/play-on-atcoder/mock/server"
 	"github.com/nyantama0616/play-on-atcoder/session"
@@ -22,9 +22,8 @@ func TestSubmit(t *testing.T) {
 
 	session := session.NewSession()
 
-	executor := cpp.NewExecutorCpp(problem, cpp.SourceCodePath{
-		MainPath:       fmt.Sprintf("%s/executor/cpp/assets/main.cpp", setting.RootDir),
-		IncludeDirPath: fmt.Sprintf("%s/executor/cpp/assets/include", setting.RootDir),
+	executor := golang.NewExecutorGolang(problem, golang.SourceCodePath{
+		MainPath: fmt.Sprintf("%s/executor/golang/_assets/main.go", setting.RootDir),
 	})
 	submitter := NewSubmitter(problem, session)
 

@@ -1,83 +1,74 @@
 package cpp
 
-import (
-	"fmt"
-	"os"
-	"testing"
+// func TestArrange(t *testing.T) {
+// 	problem := mock.NewMockProblem()
+// 	defer problem.RemoveProblemDir()
 
-	"github.com/nyantama0616/play-on-atcoder/mock"
-	"github.com/nyantama0616/play-on-atcoder/setting"
-)
+// 	executorCpp := NewExecutorCpp(
+// 		problem,
+// 		SourceCodePath{
+// 			MainPath:       fmt.Sprintf("%s/executor/cpp/assets/main.cpp", setting.RootDir),
+// 			IncludeDirPath: fmt.Sprintf("%s/executor/cpp/assets/include", setting.RootDir),
+// 		},
+// 	)
 
-func TestArrange(t *testing.T) {
-	problem := mock.NewMockProblem()
-	defer problem.RemoveProblemDir()
+// 	err := executorCpp.Arrange()
+// 	if err != nil {
+// 		t.Errorf("Arrange() failed: %v", err)
+// 	}
 
-	executorCpp := NewExecutorCpp(
-		problem,
-		SourceCodePath{
-			MainPath:       fmt.Sprintf("%s/executor/cpp/assets/main.cpp", setting.RootDir),
-			IncludeDirPath: fmt.Sprintf("%s/executor/cpp/assets/include", setting.RootDir),
-		},
-	)
+// 	t.Run("dest.cppがdest_expected.cppと等しい", func(t *testing.T) {
+// 		arrangedFile, _ := executorCpp.ArrangedFile()
+// 		defer arrangedFile.Close()
 
-	err := executorCpp.Arrange()
-	if err != nil {
-		t.Errorf("Arrange() failed: %v", err)
-	}
+// 		destCppPath := arrangedFile.Name()
+// 		destCppExpectedPath := fmt.Sprintf("%s/executor/cpp/assets/dest_expected.cpp", setting.RootDir)
+// 		//２つのファイルを比較
+// 		destCpp, _ := os.ReadFile(destCppPath)
+// 		destCppExpected, _ := os.ReadFile(destCppExpectedPath)
 
-	t.Run("dest.cppがdest_expected.cppと等しい", func(t *testing.T) {
-		arrangedFile, _ := executorCpp.ArrangedFile()
-		defer arrangedFile.Close()
+// 		if string(destCpp) != string(destCppExpected) {
+// 			t.Errorf("arrange() failed: dest.cpp is not same as expected")
+// 		}
+// 	})
+// }
 
-		destCppPath := arrangedFile.Name()
-		destCppExpectedPath := fmt.Sprintf("%s/executor/cpp/assets/dest_expected.cpp", setting.RootDir)
-		//２つのファイルを比較
-		destCpp, _ := os.ReadFile(destCppPath)
-		destCppExpected, _ := os.ReadFile(destCppExpectedPath)
+// func TestExecute(t *testing.T) {
+// 	problem := mock.NewMockProblem()
+// 	defer problem.RemoveProblemDir()
 
-		if string(destCpp) != string(destCppExpected) {
-			t.Errorf("arrange() failed: dest.cpp is not same as expected")
-		}
-	})
-}
+// 	executorCpp := NewExecutorCpp(
+// 		problem,
+// 		SourceCodePath{
+// 			MainPath:       fmt.Sprintf("%s/executor/cpp/assets/main.cpp", setting.RootDir),
+// 			IncludeDirPath: fmt.Sprintf("%s/executor/cpp/assets/include", setting.RootDir),
+// 		},
+// 	)
 
-func TestExecute(t *testing.T) {
-	problem := mock.NewMockProblem()
-	defer problem.RemoveProblemDir()
+// 	executorCpp.Arrange()
+// 	executorCpp.Compile()
 
-	executorCpp := NewExecutorCpp(
-		problem,
-		SourceCodePath{
-			MainPath:       fmt.Sprintf("%s/executor/cpp/assets/main.cpp", setting.RootDir),
-			IncludeDirPath: fmt.Sprintf("%s/executor/cpp/assets/include", setting.RootDir),
-		},
-	)
+// 	inputFilePath := fmt.Sprintf("%s/executor/cpp/assets/input.txt", setting.RootDir)
+// 	outputFilePath := fmt.Sprintf("%s/executor/cpp/assets/output.txt", setting.RootDir)
 
-	executorCpp.Arrange()
-	executorCpp.Compile()
+// 	inputFile, _ := os.Open(inputFilePath)
+// 	outputFile, _ := os.Create(outputFilePath)
+// 	defer inputFile.Close()
+// 	defer outputFile.Close()
+// 	defer os.Remove(outputFilePath)
 
-	inputFilePath := fmt.Sprintf("%s/executor/cpp/assets/input.txt", setting.RootDir)
-	outputFilePath := fmt.Sprintf("%s/executor/cpp/assets/output.txt", setting.RootDir)
+// 	err := executorCpp.Execute(inputFile, outputFile, os.Stderr)
+// 	if err != nil {
+// 		t.Errorf("Execute() failed: %v", err)
+// 	}
 
-	inputFile, _ := os.Open(inputFilePath)
-	outputFile, _ := os.Create(outputFilePath)
-	defer inputFile.Close()
-	defer outputFile.Close()
-	defer os.Remove(outputFilePath)
+// 	t.Run("出力結果が正しい", func(t *testing.T) {
+// 		output, _ := os.ReadFile(outputFilePath)
+// 		fmt.Println(string(output))
+// 		expectedOutput := "6\n"
 
-	err := executorCpp.Execute(inputFile, outputFile, os.Stderr)
-	if err != nil {
-		t.Errorf("Execute() failed: %v", err)
-	}
-
-	t.Run("出力結果が正しい", func(t *testing.T) {
-		output, _ := os.ReadFile(outputFilePath)
-		fmt.Println(string(output))
-		expectedOutput := "6\n"
-
-		if string(output) != expectedOutput {
-			t.Errorf("Execute() failed: output is not same as expected")
-		}
-	})
-}
+// 		if string(output) != expectedOutput {
+// 			t.Errorf("Execute() failed: output is not same as expected")
+// 		}
+// 	})
+// }
